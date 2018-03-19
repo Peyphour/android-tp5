@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Maps</string>
+    <string name="operation_string">Opération</string>
+    <string name="result_string">Résultat</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+</resources>
