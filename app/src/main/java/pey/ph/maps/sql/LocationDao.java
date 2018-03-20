@@ -1,3 +1,7 @@
+/**
+ * By Bertrand NANCY and Kevin NUNES
+ */
+
 package pey.ph.maps.sql;
 
 import android.arch.persistence.room.Dao;
