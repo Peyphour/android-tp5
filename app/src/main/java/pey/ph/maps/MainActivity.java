@@ -2,6 +2,7 @@ package pey.ph.maps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,6 +37,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import pey.ph.maps.calc.CalcActivity;
+import pey.ph.maps.sql.AppDatabase;
+import pey.ph.maps.sql.LocationEntity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity
     private LocationCallback mLocationCallback;
 
     private final int LOCATION_REQUEST = 2;
+
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,6 @@ public class MainActivity extends AppCompatActivity
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                Log.e("", "location update");
                 if (locationResult == null) {
                     return;
                 }
@@ -85,6 +89,8 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "db").build();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
@@ -101,7 +107,6 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
-                        Log.e("", "last location");
                         if (location != null) {
                             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                             googleMap.clear();
@@ -156,7 +161,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -185,23 +189,33 @@ public class MainActivity extends AppCompatActivity
         onLocationChanged(latLng);
     }
 
-    private void onLocationChanged(LatLng latlng) {
+    private void onLocationChanged(final LatLng latlng) {
         TextView latText = findViewById(R.id.lat_text);
         TextView longText = findViewById(R.id.long_text);
 
         latText.setText("" + latlng.latitude);
         longText.setText("" + latlng.longitude);
         saveLocationToSharedPreference(latlng);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                saveLocationToDatabase(latlng);
+            }
+        }).start();
     }
 
     private void saveLocationToSharedPreference(LatLng location) {
-
-
         SharedPreferences sharedPref = getSharedPreferences(
                 getString(R.string.shared_pref), Context.MODE_PRIVATE);
 
         Set<String> locations = sharedPref.getStringSet("locations", new HashSet<String>());
         locations.add(location.latitude + "/" + location.longitude);
-        sharedPref.edit().putStringSet("locations", locations).apply();
+        sharedPref.edit().clear().putStringSet("locations", locations).commit();
+    }
+
+    private void saveLocationToDatabase(LatLng latLng) {
+        LocationEntity locationEntity = LocationEntity.newInstance(latLng);
+        db.locationDao().insertAll(locationEntity);
     }
 }
