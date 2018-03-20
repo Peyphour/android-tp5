@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="pey.ph.maps.LocationActivity">
+
+    <fragment
+        android:id="@+id/shared_fragment"
+        android:name="pey.ph.maps.SharedPrefFragment"
+        android:layout_width="395dp"
+        android:layout_height="258dp" />
+
+    <fragment
+        android:id="@+id/sql_fragment"
+        android:name="pey.ph.maps.SQLiteFragment"
+        android:layout_width="386dp"
+        android:layout_height="254dp"
+        tools:layout_editor_absoluteX="-2dp"
+        tools:layout_editor_absoluteY="257dp" />
+
+</android.support.constraint.ConstraintLayout>

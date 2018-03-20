@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="pey.ph.calc.EditTextActivity">
+    tools:context="pey.ph.maps.calc.EditTextActivity">
 
 
     <EditText
@@ -17,6 +16,6 @@
         android:id="@+id/edit_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="pey.ph.calc.EditFragment" />
+        android:name="pey.ph.maps.calc.EditFragment" />
 
 </LinearLayout>
